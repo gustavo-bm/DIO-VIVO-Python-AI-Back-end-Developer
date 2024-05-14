@@ -10,8 +10,7 @@ def fazerDeposito():
     print("Depósito realizado!")
     return valorDeposito
 
-def fazerSaque():
-    global saldo, qtdSaques
+def fazerSaque(saldo, qtdSaques):
     if (qtdSaques == LIMITE_SAQUES):
         print("Limite máximo de saques atingido!")
         return
@@ -60,6 +59,7 @@ while True:
     if operacao == 1: 
         saldo += fazerDeposito()
     elif operacao == 2:
-        fazerSaque()
+        fazerSaque(saldo, qtdSaques)
+        qtdSaques += 1
     elif operacao == 3:
         mostrarExtrato()
