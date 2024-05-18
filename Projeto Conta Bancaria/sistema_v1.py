@@ -1,42 +1,62 @@
-saldo = 0
-qtdSaques = 0
-extrato = []
+import pandas as pd
+import random
+
 LIMITE_SAQUES = 3
 
+saldo = 0
+qtdSaques = 0
+usuarios = {}
+extrato = {}
+
+nome = str(input("Qual o seu nome? "))
+numConta = random.randint(100, 999)
+usuarios[nome] = {"nome": nome, "conta": numConta}
+
 def fazerDeposito():
+    global saldo
     valorDeposito = float(input("Valor do depósito: "))
-    print()
-    extrato.append(valorDeposito)
     print("Depósito realizado!")
+    if "Depósito" in extrato:
+        extrato["Depósito"].append(valorDeposito)
+    else:
+        extrato["Depósito"] = [valorDeposito]
+    saldo += valorDeposito
     return valorDeposito
 
-def fazerSaque(saldo, qtdSaques):
-    if (qtdSaques == LIMITE_SAQUES):
+def fazerSaque():
+    global saldo, qtdSaques
+    if qtdSaques == LIMITE_SAQUES:
         print("Limite máximo de saques atingido!")
         return
+    
     valorSaque = float(input("Quanto deseja sacar? (Limite = 500): "))
-    if (valorSaque > saldo):
+    if valorSaque > saldo:
         print("Ops! Saldo insuficiente...")
     else:
-        if (valorSaque <= 500):
+        if valorSaque <= 500:
             saldo -= valorSaque
             print(f"Você sacou {valorSaque} reais e agora possui {saldo} reais em sua conta.")
+            if "Saque" in extrato:
+                extrato["Saque"].append(valorSaque)
+            else:
+                extrato["Saque"] = [valorSaque]
             qtdSaques += 1
         else:
             print("Valor acima do limite!")
 
 def mostrarExtrato():
     if extrato:
-        for i, deposito in enumerate(extrato, start=1):
-            print(f"Depósito {i}: {deposito}")
+        for chave, valores in extrato.items():
+            for i, valor in enumerate(valores):
+                print(f"{chave} {i+1}: {valor} reais")
     else:
-        print("Ainda não foram realizados depósitos!")
+        print("Ainda não foram realizados depósitos ou saques!")
 
 print(
-        '''
+        f'''
     __________________________________________________________________
         
-            Bem-vindo ao sistema bancário GBM!
+            Bem-vindo ao sistema bancário GBM, {nome}!
 
             Digite:
 
@@ -53,13 +73,12 @@ while True:
     operacao = int(input("Qual operação deseja realizar? "))
     if operacao == 4:
         break
-
+    
     print()
 
     if operacao == 1: 
-        saldo += fazerDeposito()
+        fazerDeposito()
     elif operacao == 2:
-        fazerSaque(saldo, qtdSaques)
-        qtdSaques += 1
+        fazerSaque()
     elif operacao == 3:
         mostrarExtrato()
